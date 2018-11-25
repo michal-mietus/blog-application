@@ -23,6 +23,7 @@ export default class App extends Component {
       username: value["username"],
       password: value["password"]
     }
+
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(data), // data can be `string` or {object}!
@@ -32,7 +33,6 @@ export default class App extends Component {
     }).then(res => res.json())
     .then(response => console.log('Success:', JSON.stringify(response)))
     .catch(error => console.error('Error:', error));
-
   }
 
   render() {

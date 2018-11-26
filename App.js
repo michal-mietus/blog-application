@@ -1,51 +1,66 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Button } from 'react-native';
-
+import { View, StyleSheet, Button, Text, AsyncStorage } from 'react-native';
 import t from 'tcomb-form-native'; // 0.6.9
 
 const Form = t.form.Form;
 
 const User = t.struct({
-  email: t.maybe(t.String),
   username: t.String,
   password: t.String,
-  terms: t.Boolean
 });
 
+
 export default class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { loginError: ''}
+  }
+
+  saveTokenToAsyncStorage(token){
+    const TOKEN = 'token';
+    AsyncStorage.setItem(TOKEN, token);
+  }
+
+  isTokenReceived(response){
+    console.log('Success:', JSON.stringify(response));
+    if ("token" in response){
+      this.setState({loginError: 'Logged!'});
+      this.saveTokenToAsyncStorage(response["token"]);
+    } else {
+      this.setState({loginError: 'Invalid logging'});
+    }
+  }
 
   handleSubmit = () => {
-    const value = this._form.getValue();
-
+    const value = this._form.getValue()
     url = "http://hostingsme.pythonanywhere.com/api/api-token-auth/"
-
-    const data = {
-      username: value["username"],
-      password: value["password"]
-    }
 
     fetch(url, {
       method: 'POST',
-      body: JSON.stringify(data), // data can be `string` or {object}!
+      body: JSON.stringify(value), // data can be `string` or {object}!
       headers:{
         'Content-Type': 'application/json'
       }
     }).then(res => res.json())
-    .then(response => console.log('Success:', JSON.stringify(response)))
-    .catch(error => console.error('Error:', error));
+    .then(
+      //response => console.log('Success:', JSON.stringify(response))
+      response => this.isTokenReceived(response)
+    )
+    .catch(error => console.error('Error:', error)); 
   }
 
   render() {
     return (
       <View style={styles.container}>
         <Form 
+          type={User}
           ref={(c) => this._form = c}
-          type={User} 
         />
         <Button
-          title="Sign up!"
+          title="Login"
           onPress={this.handleSubmit}
         />
+        <Text>{this.state.loginError}</Text>
       </View>
     );
   }

@@ -102,7 +102,7 @@ const styles = StyleSheet.create({
     },
     container: {
       justifyContent: 'center',
-      marginTop: 50,
+      marginTop: 20,
       padding: 20,
       backgroundColor: '#ffffff',
     },

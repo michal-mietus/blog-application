@@ -19,6 +19,9 @@ export default class LoginScreen extends Component {
     this.state = { loginInfo: ''}
   }
 
+  componentDidMount() {
+    this.setState({spinner: false});
+  }
 
   handleSubmit = () => {
     this.setState({spinner: true})  // turn on spinner
@@ -50,6 +53,12 @@ export default class LoginScreen extends Component {
     }
   }
 
+  saveTokenToAsyncStorage(token){
+    console.log('Saving token:', String(token));
+    const TOKEN = 'token';
+    AsyncStorage.setItem(TOKEN, token);
+  }
+
   resetStackAndShowHome = () => {
     // forbids going back to login screen
     this.props
@@ -63,16 +72,6 @@ export default class LoginScreen extends Component {
         ],
       }))
    }
-
-  saveTokenToAsyncStorage(token){
-    console.log('Saving token:', String(token));
-    const TOKEN = 'token';
-    AsyncStorage.setItem(TOKEN, token);
-  }
-
-  componentDidMount() {
-      this.setState({spinner: false});
-  }
 
   render() {
     return (

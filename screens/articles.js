@@ -1,24 +1,21 @@
 import React, { Component } from 'react';
-import { View, Text, StyleSheet, AsyncStorage, ScrollView } from 'react-native';
-
+import { View, Text, StyleSheet, AsyncStorage, FlatList } from 'react-native';
 
 export default class ArticlesScreen extends Component {
     constructor(props){
         super(props);
         this.state = {
-          title: '',
-          content: '',
+          articles: [],
+          isLoading: true,
         }
       }
 
     componentDidMount(){
       this.getDataFromApiAndShow();
-      console.log(this.state)
     }
 
     getDataFromApiAndShow(){
     AsyncStorage.getItem('token').then(token => {
-        console.log('Async: ', token);
         
         let headers = {
         "Content-Type": "application/json",
@@ -32,25 +29,40 @@ export default class ArticlesScreen extends Component {
         })
         .then(response => response.json())
         .then(response => {
-            console.log('Response: ', JSON.stringify(response));
-            let title = response[0]["title"];
-            let content = response[0]["content"];
-            this.setState({title: title});
-            this.setState({content: content});
+          this.setState({articles: response});
+          this.setState({isLoading: false})
         })
         .catch(error => console.log(error))
       }).catch(error => console.log(error))
     }
 
     render () {
-      return (
-        <View style={styles.container}>
-          <ScrollView>
-            <Text style={styles.title}>{this.state.title}</Text>
-            <Text style={styles.content}>{this.state.content}</Text>
-          </ScrollView>
-        </View>
-      )
+      if (this.state.isLoading){
+        return (
+          <View style={styles.container}>
+            <Text style={styles.container}>
+              Loading
+            </Text>
+          </View>
+        )
+      }
+      else {
+        return (
+          <View>
+            <FlatList
+              data={this.state.articles}
+              renderItem={({item}) => (
+                <View style={styles.container}>
+                  <Text style={styles.title}>{item.title}</Text>
+                  <Text style={styles.content}>{item.content}</Text>
+                </View>
+                )
+              }
+              keyExtractor = {(item) => String(item.id)}
+            />
+          </View>
+        )
+      }
     }
   }
 

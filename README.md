@@ -3,7 +3,7 @@
 Application created to cooperate with blog REST Api.
 
 ### You can check this application here
-[application] (https://expo.io/@michal-mietus/Blog)
+[Application](https://expo.io/@michal-mietus/Blog)
 
 ### Technologies
 - React Native

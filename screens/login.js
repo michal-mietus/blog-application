@@ -46,11 +46,18 @@ export default class LoginScreen extends Component {
     console.log('Success:', JSON.stringify(response));
     if ("token" in response){
       this.setState({loginInfo: 'Logged!'});  // just info
+      this.saveUserIdToAsyncStorage(response["id"]);
       this.saveTokenToAsyncStorage(response["token"]);
       this.resetStackAndShowHome();
     } else {
       this.setState({loginInfo: 'Invalid logging'});
     }
+  }  
+
+  saveUserIdToAsyncStorage(userId){
+    console.log('Saving user id:', String(userId));
+    const USERID = 'userId';
+    AsyncStorage.setItem(USERID, String(userId)); // why saving only as string works?
   }
 
   saveTokenToAsyncStorage(token){

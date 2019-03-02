@@ -9,7 +9,6 @@ export default class MenuButton extends Component {
   }
 
   render() {
-    console.log(this.props)
     return (
       <View style={styles.container}>
         <TouchableOpacity

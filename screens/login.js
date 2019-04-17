@@ -26,7 +26,7 @@ export default class LoginScreen extends Component {
   handleSubmit = () => {
     this.setState({spinner: true})  // turn on spinner
     const value = this._form.getValue();
-    const url = "http://hostingsme.pythonanywhere.com/api/api-token-auth/";
+    const url = "http://http://blogapp-mm.herokuapp.com/api/api-token-auth/";
 
     fetch(url, {
       method: 'POST',

@@ -1,0 +1,2 @@
+react-native-loading-spinner-overlay
+tcomb-form-native

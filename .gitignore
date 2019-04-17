@@ -6,6 +6,4 @@ npm-debug.*
 *.key
 *.mobileprovision
 *.keystore
-assets/favicon.png
 .eslintrc.js
-assets/splash-new.png

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { View, Button, StyleSheet, Text, AsyncStorage } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation'
-import t from 'tcomb-form-native'; // 0.6.9
+import t from 'tcomb-form-native';
 import Spinner from 'react-native-loading-spinner-overlay';
+import globalVariables from '../../global/global';
+import { saveUserIdToAsyncStorage, saveTokenToAsyncStorage } from '../../global/global';
 
 
 const Form = t.form.Form;
@@ -16,7 +18,7 @@ const User = t.struct({
 export default class LoginScreen extends Component {
   constructor(props) {
     super(props);
-    this.state = { loginInfo: ''}
+    this.state = { error: ''}
   }
 
   componentDidMount() {
@@ -24,50 +26,34 @@ export default class LoginScreen extends Component {
   }
 
   handleSubmit = () => {
-    this.setState({spinner: true})  // turn on spinner
+    this.setState({spinner: true});  // turn on spinner
     const value = this._form.getValue();
-    const url = "http://hostingsme.pythonanywhere.com/api/api-token-auth/";
+    const url = globalVariables.apiUrl + "/api/api-token-auth/";
 
     fetch(url, {
       method: 'POST',
       body: JSON.stringify(value),
-      headers:{
+      headers: {
         'Content-Type': 'application/json'
       }
-    }).then(res => res.json())
-    .then(
-      response => this.isTokenReceived(response)
-    )
+    })
+    .then(res => res.json())
+    .then(response => this.isTokenReceived(response))
     .catch(error => console.error('Error:', error)); 
   }
 
   isTokenReceived(response){
-    this.setState({spinner: false})  // turn off spinner 
-    console.log('Success:', JSON.stringify(response));
+    this.setState({spinner: false});  // turn off spinner 
     if ("token" in response){
-      this.setState({loginInfo: 'Logged!'});  // just info
-      this.saveUserIdToAsyncStorage(response["id"]);
-      this.saveTokenToAsyncStorage(response["token"]);
+      saveUserIdToAsyncStorage(response["id"]);
+      saveTokenToAsyncStorage(response["token"]);
       this.resetStackAndShowHome();
     } else {
-      this.setState({loginInfo: 'Invalid logging'});
-    }
-  }  
-
-  saveUserIdToAsyncStorage(userId){
-    console.log('Saving user id:', String(userId));
-    const USERID = 'userId';
-    AsyncStorage.setItem(USERID, String(userId)); // why saving only as string works?
-  }
-
-  saveTokenToAsyncStorage(token){
-    console.log('Saving token:', String(token));
-    const TOKEN = 'token';
-    AsyncStorage.setItem(TOKEN, token);
-  }
+      this.setState({error: 'Loggin error. Try again.'});
+    };
+  };
 
   resetStackAndShowHome = () => {
-    // forbids going back to login screen
     this.props
       .navigation
       .dispatch(StackActions.reset({
@@ -78,9 +64,10 @@ export default class LoginScreen extends Component {
           }),
         ],
       }))
-   }
+   };
 
   render() {
+    const {navigate} = this.props.navigation;
     return (
       <View style={styles.container}>
         <Spinner
@@ -92,11 +79,19 @@ export default class LoginScreen extends Component {
           type={User}
           ref={(c) => this._form = c}
         />
-        <Button
-          title="Login"
-          onPress={this.handleSubmit}
-        />
-        <Text style={styles.information}>{this.state.loginInfo}</Text>
+        <View style={{margin: 5,}}>
+          <Button
+            title="Login"
+            onPress={this.handleSubmit}
+          />
+        </View>
+        <View style={{margin: 5,}}>
+          <Button
+            title='Register'
+            onPress={() => navigate('Register')}
+          />
+        </View>
+        <Text style={styles.error}>{this.state.error}</Text>
       </View>
     );
   }
@@ -112,11 +107,11 @@ const styles = StyleSheet.create({
       padding: 20,
       backgroundColor: '#ffffff',
     },
-    information: {
+    error: {
       padding: 30,
       textAlign: 'center',
       fontSize: 16,
-      color: 'black',
+      color: 'red',
       fontWeight: 'bold'
     },
   });

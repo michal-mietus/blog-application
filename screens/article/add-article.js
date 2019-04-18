@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Button, AsyncStorage } from 'react-native';
 import { NavigationActions, StackActions } from 'react-navigation'
-import t from 'tcomb-form-native'; // 0.6.9
+import t from 'tcomb-form-native';
 import { form } from 'tcomb-form-native/lib';
+import globalVariables from '../../global/global';
+
 
 var Form = t.form.Form;
 var Article = t.struct({
@@ -17,43 +19,44 @@ export default class AddArticleScreen extends Component {
 
     if (formValues){
       AsyncStorage.multiGet(['userId', 'token']).then(stores => {
-        authorIdAndToken = {};
-        stores.map((result, i, store) => {
-          let key = this.ifUserIdRenameToAuthorOrDontChange(store[i][0]);
-          let value = store[i][1];
-
-          authorIdAndToken[key] = value;
-        })
-        console.log("key, value", authorIdAndToken);
-
+        let authorIdAndToken = this.getAuthorIdAndToken(stores);
+        
         let headers = this.createRequestHeaders(authorIdAndToken["token"]);
         let body = this.createRequestBody(formValues, authorIdAndToken["author"]);
-        console.log("BODY:", body);
+        let url = globalVariables.apiUrl + "/api/article/"
 
-        url = "http://hostingsme.pythonanywhere.com/api/article/"
         fetch(url, {
           method: "POST",
           headers: headers,
           body: JSON.stringify(body),
         }).then(response => {
-          console.log(response);
           if (response["ok"] === true && response["status"] === 201){
             this.resetStackAndShowHome();
           }
         }).catch(error => {
-          console.log(error);
+          console.error(error);
         })
       })
-    }
-  }
+    };
+  };
+
+  getAuthorIdAndToken(stores){
+    authorIdAndToken = {}
+    stores.map((result, i, store) => {
+      let key = this.ifUserIdRenameToAuthorOrDontChange(store[i][0]);
+      let value = store[i][1];
+      authorIdAndToken[key] = value;
+    })
+    return authorIdAndToken;
+  };
 
   ifUserIdRenameToAuthorOrDontChange(key){
     if (key === 'userId'){
       return 'author';
     } else {
       return key;
-    }
-  }
+    };
+  };
 
   createRequestHeaders(token){
     headers = {
@@ -62,7 +65,7 @@ export default class AddArticleScreen extends Component {
     };
 
     return headers;
-  }
+  };
 
   createRequestBody(formValues, authorId){
     title = formValues["title"];
@@ -72,13 +75,12 @@ export default class AddArticleScreen extends Component {
       "title": title,
       "content": content,
       "author": authorId,
-    }
+    };
 
     return body;
-  }
+  };
 
   resetStackAndShowHome = () => {
-    // forbids going back to login screen
     this.props
       .navigation
       .dispatch(StackActions.reset({
@@ -89,7 +91,7 @@ export default class AddArticleScreen extends Component {
           }),
         ],
     })
-  )}
+  )};
 
   render(){
     return (
@@ -104,8 +106,8 @@ export default class AddArticleScreen extends Component {
         />
       </View>
     )
-  }
-}
+  };
+};
 
 const styles = StyleSheet.create({
   container: {

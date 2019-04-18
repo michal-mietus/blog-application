@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, AsyncStorage, FlatList } from 'react-native';
+import globalVariables from '../../global/global';
 
 export default class ArticlesScreen extends Component {
     constructor(props){
@@ -22,7 +23,7 @@ export default class ArticlesScreen extends Component {
         "Authorization": "Token " + String(token),
         }
 
-        let url = "http://hostingsme.pythonanywhere.com/api/article/";
+        let url = globalVariables.apiUrl + "/api/article/";
         fetch(url, {
           method: "GET",
           headers: headers,

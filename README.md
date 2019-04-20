@@ -1,9 +1,16 @@
 # Blog mobile application
 
-Application created to cooperate with blog REST Api.
+Blog application on mobile devices created to cooperate with 
+Blog DRF API.
 
 ### You can check this application here
 [Application](https://expo.io/@michal-mietus/Blog)
+
+### Features
+- login
+- register
+- adding posts
+- viewing posts
 
 ### Technologies
 - React Native
@@ -11,12 +18,6 @@ Application created to cooperate with blog REST Api.
 - react-navigation
 - react-native-loading-spinner-overlay
 - Expo (for developing)
-
-### Functionalities
-* loggin to your account
-* sharing posts through your phone
-* viewing articles
-
 
 ### Illustrations
 ![Login view](https://i.ibb.co/bNHJbFG/Screenshot-20190302-124534.jpg)

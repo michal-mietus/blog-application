@@ -1,7 +1,7 @@
 # Blog mobile application
 
 
-Application created for mobile devices to cooperate with blog 
+Application created for mobile devices to cooperate with Blog 
 DRF REST Api.
 
 ### You can check this application here
